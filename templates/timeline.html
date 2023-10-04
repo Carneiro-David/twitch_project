@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="en" style="height: 100%;">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphique</title>
-</head>
+{% block content %}
+<div id='chart' class='chart'></div>
 
-<body>
-    <div id='chart' class='chart'></div>
-    
-    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-    <script type='text/javascript'>
-        var graphs = {{fig | safe}};
-        Plotly.plot('chart',graphs,{});
-    </script>
-</body>
-
-</html>
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script type='text/javascript'>
+    var graphs = {{fig | safe}};
+    Plotly.plot('chart',graphs,{});
+</script>
+{% endblock %}
