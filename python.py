@@ -8,8 +8,12 @@ import base64
 import matplotlib
 import datetime
 import re
-
-
+import pandas as pd
+from raceplotly.plots import barplot
+import plotly.graph_objects as go
+import plotly
+from random import sample
+import random
 
 app = Flask(__name__)
 
@@ -37,6 +41,7 @@ def index():
     data_json = json.dumps(data_df.to_dict(orient='records'))
     
     return render_template('index.html', data_json=data_json, chart_image_by_year=None)
+
 
 @app.route('/jeu/<jeu>', methods=['GET', 'POST'])
 def filter_data(jeu):
@@ -124,6 +129,172 @@ def filter_data(jeu):
         plt.clf()
 
     return render_template('Home/index.html',table = table_data, graphAnne = chart_image_annee, chart_image_by_year=chart_image, years=years, dataAnnee = data_json2, annee = selected_year, current_year = current_year)
+
+@app.route('/timeline/', methods=['GET'])
+def timeline():
+    cursor = mysql.connection.cursor()
+
+    query = """
+    SELECT
+        year,
+        month,
+        game,
+        ROW_NUMBER() OVER (PARTITION BY year, month ORDER BY hours_watched DESC) AS game_rank,
+        hours_watched,
+        hours_streamed,
+        peak_viewers
+    FROM
+        game_data
+    WHERE
+        game_data.rank <= 10
+    ORDER BY
+        year ASC,
+        month ASC,
+        game_data.rank ASC;
+    """
+
+    cursor.execute(query)
+    top_games = cursor.fetchall()
+
+    grouped_data = {}
+
+    for year, month, game, game_rank, hours_streamed, peak_viewers, hours_watched in top_games:
+        if year not in grouped_data:
+            grouped_data[year] = {}
+        if month not in grouped_data[year]:
+            grouped_data[year][month] = []
+
+        grouped_data[year][month].append({
+            'game': game,
+            'game_rank': game_rank,
+            'hours_streamed': hours_streamed,
+            'hours_watched': hours_watched,
+            'peak_viewers': peak_viewers
+        })
+
+    data_df = pd.DataFrame(top_games, columns=[desc[0] for desc in cursor.description])
+    
+    my_raceplot = barplot(data_df, item_column="game", value_column="peak_viewers", time_column="year")
+    my_raceplot.plot(title = 'Top 10 best game from 2015 to 2023', item_label = 'Top 10 jeux', value_label = 'Peek de viewers', frame_duration = 800)
+
+    fig = {
+        "data": [],
+        "layout": {},
+        "frames": []
+    }
+    
+    unique_games = data_df['game'].unique()
+    game_colors = {game: 'rgb({}, {}, {})'.format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)) for game in unique_games}
+    data_df['color'] = data_df['game'].map(game_colors)
+
+    frame1 = data_df[data_df['year'] == data_df['year'].min()]
+
+    top_entries = 10
+    frame1 = frame1.iloc[:top_entries, :]
+    frame1 = frame1.sort_values('game_rank', ascending = False).iloc[:top_entries, :]
+    fig['data'] = go.Bar(
+        x = frame1['hours_watched'],
+        y = frame1['game'],
+        marker_color = frame1['color'],
+        hoverinfo = 'all',
+        textposition = 'outside',
+        # texttemplate = '%{y}',
+        texttemplate = '%{y}<br>%{x:.4s}',
+        orientation = 'h',
+        textfont = {'size': 20}
+    )
+
+    fig['layout'] = go.Layout(
+        font = {'size' : 14},
+        plot_bgcolor = 'white',
+        xaxis = {
+            'showline': True,
+            'visible': True,
+            'range': (0, data_df['hours_watched'].max()),
+            'title_text': 'Heures visionnées' # title of the x axis,
+        },
+        yaxis = {
+            'showline': False, 
+            'visible': True, # to show the title
+            'showticklabels': False, # to avoid displaying the names
+            'title_text': 'Top 10 des jeux'
+        }, # title of the y axis
+        bargap = 0.15, # number btwn 0 and 1, sets gap between adjacent bars (as plot fraction)
+        title = 'Jeux les plus regardés', # sets title for default plot
+        height = 650
+    )
+
+    sliders_dict = {
+        "active": 0,
+        "yanchor": "top",
+        "xanchor": "left",
+        "currentvalue": {
+            "font": {"size": 20},
+            "prefix": "Year:",
+            "visible": True,
+            "xanchor": "right"
+        },
+        "transition": {"duration": 1500, "easing": "cubic-in-out"},
+        "pad": {"b": 10, "t": 50},
+        "len": 0.9,
+        "x": 0.1,
+        "y": 0,
+        "steps": []
+    }
+
+    for year in range(data_df['year'].min(), data_df['year'].max()+1):
+        snap_data = data_df[data_df['year'] == year]
+        snap_data = snap_data.iloc[:top_entries,:]
+        snap_data = snap_data.sort_values('game_rank', ascending=False).iloc[:top_entries,:]
+
+        frame = go.Frame(
+            data=[
+                go.Bar(
+                    x=snap_data['hours_watched'],
+                    y=snap_data['game'],
+                    marker_color=snap_data['color'],
+                    hoverinfo='all',
+                    textposition='outside',
+                    texttemplate= '%{y}',
+                    # texttemplate= '%{y}<br>%{x:.4s}',
+                    orientation = 'h'
+                )
+            ],
+            layout=go.Layout(
+                font={'size': 14},
+                plot_bgcolor = 'white',
+                xaxis={
+                    'showline': True,
+                    'visible': True,
+                    'range': (0, data_df['hours_watched'].max())
+                },
+                yaxis={
+                    'showline': False,
+                    'visible': False
+                },
+                bargap= 0.15,
+                title= 'Top 10 Crops across time'
+            ),
+            name = year
+        )
+        fig['frames'].append(frame)
+
+        slider_step = {"args": [
+            [year],
+            {"frame": {"duration": 300, "redraw": False},
+            "mode": "immediate",
+            "transition": {"duration": 300}}
+        ],
+        "label": year,
+        "method": "animate"}
+        sliders_dict["steps"].append(slider_step)
+
+        fig['layout']['sliders'] = [sliders_dict]
+
+    figSchema = go.Figure(fig)
+    figChart64 = json.dumps(figSchema, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return render_template('timeline.html', fig=figChart64)
 
 if __name__ == '__main__':
     app.run(debug=True)
