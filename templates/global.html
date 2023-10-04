@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card-body p-0">
+    <div class="card-header bg-bleuAzur p-3 m-0">
+        <h5 class="card-title text-white m-0">Dashboard global</h5>
+    </div>
+
+    <div class="cardStats py-2">
+        <div class="divSpace">
+            <form method="POST" action="{{ url_for('toggle_graph') }}" id="graphToggleForm">
+                <div class="switch-container form-check form-switch fs-20 mt-2">
+                    <label class="switch me-1">
+                        <input class="form-check-input" type="checkbox" role="switch" id="unitSwitch" {% if switch_checked %}checked{% endif %}>
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="switch-label txtStyle1 sombre" for="flexSwitchCheckChecked">{{ switch_label }}</span>
+                </div>
+            </form>
+        </div>
+
+        <div class="divGraphs">
+            <div class="divGraphsRow">
+                <img src="{{ graph_url }}" width="800">
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Statistique</th>
+                    <th>Année du record</th>
+                    <th>Valeur record</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat, record in records.items() %}
+                    <tr>
+                        <td>{{ stat }}</td>
+                        <td>{{ record['year'] }}</td>
+                        <td>{{ '{:,.0f}'.format(record['record']) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('unitSwitch').addEventListener('change', function () {
+        document.getElementById('graphToggleForm').submit();
+    });
+</script>
+{% endblock %}

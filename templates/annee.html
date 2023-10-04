@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Page Année</h1>
+    
+<form class="d-flex align-items-center" method="GET" action="{{ url_for('annee_vue') }}">
+    <label for="year">Sélectionnez une année (2016-2023) :</label>
+    <input type="number" class="mx-2" id="year" name="year" min="2016" max="2023" required>
+    <input type="submit" class="btn btn-outline-primary" value="Confirmer">
+</form>
+
+
+<div>
+    <div id="chart-by-year">
+        {% if chart_image_by_year %}
+        <img src="data:image/png;base64,{{ chart_image_by_year }}" alt="Graphique à barres par année">
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
