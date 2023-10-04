@@ -1,11 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Graphique</title>
 </head>
+
 <body>
-    
+    <div id="chart-by-year">
+        {% if chart_image_by_year %}
+        <img src="data:image/png;base64,{{ chart_image_by_year }}" alt="Graphique à barres par année">
+        {% endif %}
+    </div>
+
+    <form method="post" id="year-form">
+        <label for="year-select">Sélectionnez une année :</label>
+        <select id="year-select" name="year">
+            <option value="">Toutes les années</option> <!-- Option pour afficher toutes les années -->
+            {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- Affichez les données JSON au besoin -->
+    <div id="data-json" >{{ data_json }}</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var yearSelect = document.getElementById('year-select');
+            var yearForm = document.getElementById('year-form');
+
+            yearSelect.addEventListener('change', function () {
+                yearForm.submit();
+            });
+        });
+    </script>
 </body>
+
 </html>
