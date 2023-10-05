@@ -1,4 +1,3 @@
-from controllers.annee_controller import AnneeController
 from controllers.global_controller import GlobalController
 import pandas as pd
 from flask import Flask, request, render_template, jsonify
@@ -44,7 +43,7 @@ def toggle_graph():
 
 
 @app.route('/jeu')
-def allGame():
+def allGames():
     cursor = mysql.connection.cursor()
     
     query = "SELECT game, sum(hours_watched) as sumHours FROM `game_data` group by game ORDER BY `sumHours` DESC"
@@ -60,7 +59,7 @@ def allGame():
 
 
 @app.route('/jeu/<jeu>', methods=['GET', 'POST'])
-def jeu_id_vue(jeu):
+def jeu_vue(jeu):
     cursor = mysql.connection.cursor()
 
     selected_year = None
