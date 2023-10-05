@@ -1,11 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div id='chart' class='chart'></div>
+    <div class="d-flex justify-content-center mb-2">
+        <div class="btn-group" role="group" aria-label="Switch">
+            <button id="btnYear" class="btn btn-outline-primary">Année</button>
+            <button id="btnMonth" class="btn btn-outline-primary">Mois</button>
+        </div>
+    </div>
+    <div id='chart' class='chart'></div>
+{% endblock %}
 
-<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-<script type='text/javascript'>
-    var graphs = {{fig | safe}};
-    Plotly.plot('chart',graphs,{});
-</script>
+{% block script %}
+    {{ super () }} 
+    <script type='text/javascript'>
+        const chartDiv = document.getElementById("chart");
+        const btnYear = document.getElementById("btnYear");
+        const btnMonth = document.getElementById("btnMonth");
+
+        btnYear.addEventListener("click", function (e) {
+            var graphs = {{chartYear | safe}};
+            Plotly.purge(chartDiv);
+            Plotly.plot('chart',graphs,{});
+        });
+        btnMonth.addEventListener("click", function (e) {
+            var graphs = {{chartMonth | safe}};
+            Plotly.purge(chartDiv);
+            Plotly.plot('chart',graphs,{});
+        });
+    </script>
 {% endblock %}

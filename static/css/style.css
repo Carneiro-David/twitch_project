@@ -127,3 +127,24 @@ input:checked + .slider:before {
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
+
+.btn-outline-purple {
+    color: #65459b
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #65459b;
+    --bs-btn-border-color: #65459b;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #65459b;
+    --bs-btn-hover-border-color: #65459b;
+    --bs-btn-focus-shadow-rgb: 13,110,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #65459b;
+    --bs-btn-active-border-color: #65459b;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #65459b;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #65459b;
+    --bs-gradient: none;
+}
