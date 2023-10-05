@@ -43,20 +43,20 @@ def toggle_graph():
     return global_controller.toggle_graph()
 
 
-@app.route('/')
-def index():
+@app.route('/jeu')
+def allGame():
     cursor = mysql.connection.cursor()
     
-    query = "SELECT * FROM game_data"
+    query = "SELECT game, sum(hours_watched) as sumHours FROM `game_data` group by game ORDER BY `sumHours` DESC"
     cursor.execute(query)
     
     data_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
     
     cursor.close()
     
-    data_json = json.dumps(data_df.to_dict(orient='records'))
+    data_dict = data_df.to_dict(orient='records')
     
-    return render_template('index.html', data_json=data_json, chart_image_by_year=None)
+    return render_template('listJeu.html', table=data_dict)
 
 
 @app.route('/jeu/<jeu>', methods=['GET', 'POST'])
