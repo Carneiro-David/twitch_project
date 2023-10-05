@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-center mb-4 mt-4">Liste des jeux Streamer</h1>
+<!-- {{table}} -->
+<table id="example" class="table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Rang</th>
+            <th>Jeu</th>
+            <th>Heures vues</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for game in table %}
+        <tr>
+            <td>1</td>
+            <td>{{ game.game }}</td>
+            <td>{{ game.sumHours }}</td>
+            <td>
+                <!-- Vous pouvez ajouter des boutons ou des liens ici pour les actions -->
+                <a href="{{ url_for('filter_data', jeu=game.game)}}" class="btn btn-primary">Voir détails</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block script %}
+{{ super () }}
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+{% endblock %}

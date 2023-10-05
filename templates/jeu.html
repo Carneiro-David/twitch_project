@@ -49,10 +49,12 @@
 
                     </tbody>
                 </table>
-                {{table}}
             </div>
         </div>
     </div>
+{% endblock %}
+{% block script %}
+{{ super () }} 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var yearSelect = document.getElementById('year-select');
@@ -62,11 +64,10 @@
                 yearForm.submit();
             });
         });
-        new DataTable('#example');
 
         $(document).ready(function () {
             $('#example').DataTable();
         });
-    </script>
+    </script> 
 {% endblock %}
 
