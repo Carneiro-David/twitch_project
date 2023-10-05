@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="card-body p-0">
-    <div class="card-header bg-bleuAzur p-3 m-0">
-        <h5 class="card-title text-white m-0">Tableau de bord global</h5>
+    <div class="card-header bg-violetTwitch p-3 m-0">
+        <h5 class="card-title text-white m-0">Statistiques globales</h5>
     </div>
 
     <div class="cardStats py-2">
@@ -14,7 +14,7 @@
                         <input class="form-check-input" type="checkbox" role="switch" id="unitSwitch" {% if switch_checked %}checked{% endif %}>
                         <span class="slider round"></span>
                     </label>
-                    <span class="switch-label txtStyle1 sombre" for="flexSwitchCheckChecked">{{ switch_label }}</span>
+                    <span class="switch-label txtStyle1 dark" for="flexSwitchCheckChecked">{{ switch_label }}</span>
                 </div>
             </form>
         </div>
@@ -29,7 +29,7 @@
             <thead>
                 <tr>
                     <th>Statistique</th>
-                    <th>Année du record</th>
+                    <th>Date du record</th>
                     <th>Valeur record</th>
                 </tr>
             </thead>
@@ -37,7 +37,7 @@
                 {% for stat, record in records.items() %}
                     <tr>
                         <td>{{ stat }}</td>
-                        <td>{{ record['year'] }}</td>
+                        <td>{{ record['date'] }}</td>
                         <td>{{ '{:,.0f}'.format(record['record']) }}</td>
                     </tr>
                 {% endfor %}
