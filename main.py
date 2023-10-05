@@ -1,8 +1,4 @@
-from flask import Flask, render_template
-from flask_mysqldb import MySQL
-from controllers.annee_controller import AnneeController
 from controllers.global_controller import GlobalController
-
 import pandas as pd
 from flask import Flask, request, render_template, jsonify
 from flask_mysqldb import MySQL
@@ -45,23 +41,25 @@ def toggle_graph():
     global_controller = GlobalController()
     return global_controller.toggle_graph()
 
-@app.route('/')
-def index():
+
+@app.route('/jeu')
+def allGames():
     cursor = mysql.connection.cursor()
     
-    query = "SELECT * FROM game_data"
+    query = "SELECT game, sum(hours_watched) as sumHours FROM `game_data` group by game ORDER BY `sumHours` DESC"
     cursor.execute(query)
     
     data_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
     
     cursor.close()
     
-    data_json = json.dumps(data_df.to_dict(orient='records'))
+    data_dict = data_df.to_dict(orient='records')
     
-    return render_template('index.html', data_json=data_json, chart_image_by_month=None)
+    return render_template('listJeu.html', table=data_dict)
+
 
 @app.route('/jeu/<jeu>', methods=['GET', 'POST'])
-def filter_data(jeu):
+def jeu_vue(jeu):
     cursor = mysql.connection.cursor()
 
     selected_year = None
@@ -75,12 +73,10 @@ def filter_data(jeu):
             cursor.execute(query, (jeu, selected_year))
             dataFrameAnnee = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
 
-            # Remplacer les numéros des mois par leurs abréviations
             month_mapping = {1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Avr', 5: 'Mai', 6: 'Jun',
                             7: 'Jul', 8: 'Aou', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
             dataFrameAnnee['month'] = dataFrameAnnee['month'].replace(month_mapping)
 
-            # Convertir les mois en catégorie et spécifier l'ordre des catégories
             months_order = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec']
             dataFrameAnnee['month'] = pd.Categorical(dataFrameAnnee['month'], categories=months_order, ordered=True)
 
@@ -102,8 +98,14 @@ def filter_data(jeu):
     data_json3 = json.dumps(data_df_peak_viewer.to_dict(orient='records'))
     table_data = json.loads(data_json3)
 
+    query ="SELECT game, sum(hours_streamed) as hours_streamed FROM `game_data` where game =%s ORDER BY `game_data`.`game` DESC"
+    cursor.execute(query, (jeu,))
+    hour_streamed = cursor.fetchall()
 
-
+    query ="SELECT game, sum(hours_watched), year FROM `game_data` where game =%s group by year ORDER BY `game_data`.`game` DESC"
+    cursor.execute(query, (jeu,))
+    hours_watched = cursor.fetchall()
+    
     cursor.close()
 
     myDatetime = datetime.datetime.now()
@@ -145,7 +147,7 @@ def filter_data(jeu):
         chart_image_annee = base64.b64encode(image_buffer.read()).decode('utf-8')
         plt.clf()
 
-    return render_template('jeu.html',table = table_data, graphAnne = chart_image_annee, chart_image_by_year=chart_image, years=years, dataAnnee = data_json2, annee = selected_year, current_year = current_year)
+    return render_template('jeu.html', hours_watched = hours_watched, hours_streamed= hour_streamed, table = table_data, graphAnne = chart_image_annee, chart_image_by_year=chart_image, years=years, dataAnnee = data_json2, annee = selected_year, current_year = current_year)
 
 @app.route('/timeline/', methods=['GET'])
 def timeline():

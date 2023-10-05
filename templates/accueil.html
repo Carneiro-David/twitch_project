@@ -1,11 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Bienvenue sur la page d'accueil</h1>
 
-    <div>
-        <a href="{{ url_for('global_vue') }}" class="btn btn-primary">Vers la page globale</a>
-        {# <a href="{{ url_for('annee_vue') }}" class="btn btn-primary">Vers la page année</a>
-        <a href="{{ url_for('jeu_vue') }}" class="btn btn-primary">Vers la page jeu</a> #}
+<div class="card-body p-0">
+    <div class="card-header bg-dark p-3 m-0">
+        <h1 class="txtStyle2 text-white m-0">Évolution du streaming sur <span class="violetTwitch">Twitch</span> de 2016 à 2023</h1>
     </div>
+
+    <div class="cardStats pt-4 pb-2">
+        <div class="divSpace">
+            <div class="row">
+                <a class="btn__valo btn__valo--green me-3 text-decoration-none btn" href="{{ url_for('global_vue') }}">
+                    <span class="btn__inner">
+                        <span class="btn__slide__green"></span>
+                        <span class="btn__content"><i class="fa-solid fa-circle-user fa-xl me-2"></i>Stats globales</span>
+                    </span>
+                </a>
+                
+                <a class="btn__valo btn__valo--red text-decoration-none btn" href="{{ url_for('annee_vue') }}">
+                    <span class="btn__inner">
+                        <span class="btn__slide__red"></span>
+                        <span class="btn__content"><i class="fa-solid fa-file-invoice fa-xl me-2"></i>Stats année</span>
+                    </span>
+                </a>
+         
+                <a class="btn__valo btn__valo--blue text-decoration-none btn" href="{{ url_for('allGames') }}">
+                    <span class="btn__inner">
+                        <span class="btn__slide__blue"></span>
+
+                        <span class="btn__content"><i class="fa-solid fa-square-poll-horizontal fa-xl me-3"></i>Stats jeux</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

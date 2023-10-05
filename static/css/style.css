@@ -7,6 +7,7 @@
 html {
     scroll-behavior: smooth;
     overflow-x: auto;
+    height: 100vh;
 }
 body {
     height: 100vh;
@@ -23,15 +24,51 @@ body {
     background-color: rgb(23, 25, 26);
     overflow-x: hidden;
 }
+.fond {
+    /* position: fixed; */
+    display: table;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-background-size: cover;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
+}
+.bg-image1 {
+    background-image: url(../images/fond1.jpg);
+}
 .bg-bleuAzur {
     background-color: #2a74db;
     border-color: #236fda;
 }
-.sombre {
+.dark {
     color: rgba(33, 37, 41);
 }
-.bg-sombre {
+.bg-dark {
     background-color: rgba(33, 37, 41);
+}
+.violetTwitch {
+    color: #6441a5;
+}
+.bg-violetTwitch {
+    background-color: #6441a5;
+}
+.txtStyle1 {
+    font-weight: 400;
+    letter-spacing: .2px;
+    text-transform: uppercase;
+}
+.txtStyle2 {
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 1.6rem;
+    text-align: center;
 }
 /* ------------------------------------------------------------------------------------------------------------------------ */
 /* ------------------------------------------------------ PAGE GLOBAL ----------------------------------------------------- */
@@ -54,12 +91,6 @@ body {
     display: flex;
     justify-content: space-evenly;
 }
-.txtStyle1 {
-    font-weight: 400;
-    letter-spacing: .2px;
-    text-transform: uppercase;
-}
-
 .card-header {
     border-top-right-radius: 1rem !important;
     border-top-left-radius: 1rem !important;
@@ -95,7 +126,7 @@ body {
     right: 0;
     bottom: 0;
     /*background-color: #FC7307;*/
-    background-color: #2a74db;
+    background-color: #6441a5;
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -117,10 +148,10 @@ body {
     border-radius: 50%;
 }
 input:checked + .slider {
-    background-color: #2a74db;
+    background-color: #6441a5;
 }
 input:focus + .slider {
-    box-shadow: 0 0 1px #2a74db;
+    box-shadow: 0 0 1px #6441a5;
 }
 input:checked + .slider:before {
     -webkit-transform: translateX(26px);
@@ -128,11 +159,234 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
+/* ------------------------------------------------------------------------------------------------------------------------ */
+/* ------------------------------------------------------ PAGE ACCUEIL ---------------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------------------------------ */
+
+:root {
+	--background-color: #0f1923;
+    --button-text-color: var(--background-color);
+	--button-text-color-hover: var(--button-background-color);
+	--border-color: #7d8082;
+	--button-background-color: #ece8e1;
+	--highlight-color: #212529;
+	--highlight-color-green: #31b672;
+	--highlight-color-red: #ff4655;
+	--highlight-color-blue: #4696ff;
+	--highlight-color-purple: #8751a9;
+	--button-inner-border-color: transparent;
+	--button-bits-color: var(--background-color);
+	--button-bits-color-hover: var(--button-background-color);
+}
+
+.btn__valo {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	border: none;
+	background: none;
+	padding: 0;
+	color: var(--button-text-color);
+	cursor: pointer;
+	position: relative;
+	padding: 8px;
+	margin-bottom: 20px;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 14px;
+	transition: all 0.15s ease;
+}
+
+.btn__valo::before,
+.btn__valo::after {
+	content: "";
+	display: block;
+	position: absolute;
+	right: 0;
+	left: 0;
+	height: calc(50% - 5px);
+	border: 1px solid var(--border-color);
+	transition: all 0.15s ease;
+}
+
+.btn__valo::before {
+	top: 0;
+	border-bottom-width: 0;
+}
+
+.btn__valo::after {
+	bottom: 0;
+	border-top-width: 0;
+}
+
+.btn__valo:active,
+.btn__valo:focus {
+	outline: none;
+}
+
+.btn__valo:active::before,
+.btn__valo:active::after {
+	right: 3px;
+	left: 3px;
+}
+
+.btn__valo:active::before {
+	top: 3px;
+}
+
+.btn__valo:active::after {
+	bottom: 3px;
+}
+
+.btn__inner {
+	position: relative;
+	display: block;
+	padding: 20px 30px;
+	background-color: var(--button-background-color);
+	overflow: hidden;
+	box-shadow: inset 0px 0px 0px 1px var(--button-inner-border-color);
+}
+
+.btn__inner::before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 2px;
+	height: 2px;
+	background-color: var(--button-bits-color);
+}
+
+.btn__inner::after {
+	content: "";
+	display: block;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 4px;
+	height: 4px;
+	background-color: var(--button-bits-color);
+	transition: all 0.2s ease;
+}
+
+.btn__slide {
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: -1px;
+	left: -8px;
+	width: 0;
+	background-color: var(--highlight-color);
+	transform: skew(-15deg);
+	transition: all 0.2s ease;
+}
+
+.btn__slide__green {
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: -1px;
+	left: -8px;
+	width: 0;
+	background-color: var(--highlight-color-green);
+	transform: skew(-15deg);
+	transition: all 0.2s ease;
+}
+
+.btn__slide__red {
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: -1px;
+	left: -8px;
+	width: 0;
+	background-color: var(--highlight-color-red);
+	transform: skew(-15deg);
+	transition: all 0.2s ease;
+}
+
+.btn__slide__blue {
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: -1px;
+	left: -8px;
+	width: 0;
+	background-color: var(--highlight-color-blue);
+	transform: skew(-15deg);
+	transition: all 0.2s ease;
+}
+
+.btn__slide__purple {
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: -1px;
+	left: -8px;
+	width: 0;
+	background-color: var(--highlight-color-purple);
+	transform: skew(-15deg);
+	transition: all 0.2s ease;
+}
+
+.btn__content {
+	position: relative;
+}
+
+.btn__valo:hover {
+	color: var(--button-text-color-hover);
+}
+
+.btn__valo:hover .btn__slide,
+.btn__valo:hover .btn__slide__green,
+.btn__valo:hover .btn__slide__red, 
+.btn__valo:hover .btn__slide__blue,
+.btn__valo:hover .btn__slide__purple {
+	width: calc(100% + 15px);
+}
+
+.btn__valo:hover .btn__inner::after {
+	background-color: var(--button-bits-color-hover);
+}
+
+.btn__valo--green {
+	--button-background-color: var(--background-color);
+	--button-text-color: var(--highlight-color-green);
+	--button-inner-border-color: var(--highlight-color-green);
+	--button-text-color-hover: #ece8e1;
+	--button-bits-color-hover: #ece8e1;
+}
+
+.btn__valo--red {
+	--button-background-color: var(--background-color);
+	--button-text-color: var(--highlight-color-red);
+	--button-inner-border-color: var(--highlight-color-red);
+	--button-text-color-hover: #ece8e1;
+	--button-bits-color-hover: #ece8e1;
+}
+
+.btn__valo--blue {
+	--button-background-color: var(--background-color);
+	--button-text-color: var(--highlight-color-blue);
+	--button-inner-border-color: var(--highlight-color-blue);
+	--button-text-color-hover: #ece8e1;
+	--button-bits-color-hover: #ece8e1;
+}
+
+.btn__valo--purple {
+	--button-background-color: var(--background-color);
+	--button-text-color: var(--highlight-color-purple);
+	--button-inner-border-color: var(--highlight-color-purple);
+	--button-text-color-hover: #ece8e1;
+	--button-bits-color-hover: #ece8e1;
+}
+
 .btn-outline-purple {
     color: #65459b
 }
 
-.btn-outline-primary {
+.btn-outline-purple {
     --bs-btn-color: #65459b;
     --bs-btn-border-color: #65459b;
     --bs-btn-hover-color: #fff;

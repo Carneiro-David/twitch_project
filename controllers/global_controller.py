@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, session
-from global_model import get_years, get_hrswatchd_graph, get_avgviewers_graph, get_records
+from models.global_model import get_years, get_hrswatchd_graph, get_avgviewers_graph, get_records
 
 class GlobalController:
     def __init__(self):
