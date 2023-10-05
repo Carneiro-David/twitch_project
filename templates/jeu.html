@@ -53,6 +53,10 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+{{ super () }} 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var yearSelect = document.getElementById('year-select');
@@ -67,6 +71,6 @@
         $(document).ready(function () {
             $('#example').DataTable();
         });
-    </script>
+    </script> 
 {% endblock %}
 
