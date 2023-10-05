@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Update Jeu{% endblock %}
+
+{% block content %}
+
+
+<div class="card-body p-0">
+    <div class="card-header bg-violetTwitch p-3 m-0">
+        <h1 class="txtStyle2 text-white m-0">Modifier le nom du jeu</h1>
+    </div>
+    
+    <div class="cardStats pt-4 pb-2">
+        <div class="divSpace">
+            <form method="POST" action="{{ url_for('game_update', jeu=jeu) }}">
+                <div class="d-flex align-items-center">
+                    <label for="nvNom" class="dark minw1 me-1">Nouveau nom :</label>
+                    <input type="text" id="nvNom" name="nvNom" class="form-control" value="{{ jeu }}" required minlength="2" maxlength="100">
+                    <button type="submit" class="btn btn-outline-success ms-1">Modifier</button>
+                </div>
+            </form>
+            
+            <a href="{{ url_for('jeu_vue', jeu=jeu) }}" class="btn btn-outline-primary mt-3">Retour au jeu</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

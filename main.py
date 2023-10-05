@@ -1,6 +1,6 @@
 from controllers.global_controller import GlobalController
 import pandas as pd
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, redirect, url_for
 from flask_mysqldb import MySQL
 import json
 import matplotlib.pyplot as plt
@@ -157,8 +157,8 @@ def jeu_vue(jeu):
     return render_template('jeu.html', hours_watched = hours_watched, hours_streamed= hour_streamed, table = table_data, viewers_month_chart = chart_image_annee, chart_image_by_year=chart_image, years=years, dataAnnee = data_json2, annee = selected_year, current_year = current_year, jeu = jeu, chart_image_annee_default = chart_image_annee_default)
   
 def generate_default_chart(jeu, selected_year):
-    cursor = mysql.connection.cursor()
 
+    cursor = mysql.connection.cursor()
     query = "SELECT * FROM game_data WHERE game=%s AND year=%s"
     cursor.execute(query, (jeu, selected_year))
     dataFrameAnnee = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
@@ -191,6 +191,31 @@ def generate_default_chart(jeu, selected_year):
     cursor.close()
 
     return chart_image_annee
+
+
+@app.route('/jeuUpdate/<jeu>', methods=['GET', 'POST'])
+def game_update(jeu):
+    if request.method == 'POST':
+        nvNom = request.form.get('nvNom')
+
+        print("Jeu:", jeu)
+        print("Nouveau nom:", nvNom)
+
+        if nvNom:
+            if len(nvNom) < 2 or len(nvNom) > 100:
+                return "Le nom du jeu doit contenir entre 2 et 100 caractères."
+
+            cursor = mysql.connection.cursor()
+            query = "UPDATE game_data SET game = %s WHERE game = %s"
+            cursor.execute(query, (nvNom, jeu))
+            mysql.connection.commit()
+            cursor.close()
+
+            print("Requête SQL:", query)
+
+        return redirect(url_for('jeu_vue', jeu=nvNom))
+
+    return render_template('jeu_update.html', jeu=jeu)
 
 @app.route('/timeline/', methods=['GET'])
 def annee_vue():
