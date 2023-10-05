@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
-
+{% block title %}Liste des jeux{% endblock %}
+{% block content %}
+{% extends 'base.html' %}
+{% block title %}Liste des jeux{% endblock %}
 {% block content %}
 
 <div class="card-body p-0">
@@ -34,6 +37,18 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+{{ super () }}
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+{% endblock %}
     </div>
 
 {% endblock %}

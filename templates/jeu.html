@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% block title %}{{jeu}}{% endblock %}
 {% block content %}
 <div class="card-body p-0">
     <div class="card-header bg-violetTwitch p-3 m-0">
@@ -41,6 +41,32 @@
                         {% endif %}
                     </div>
                 </div>
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="..." class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <!-- <h5 class="card-title">Card tit  le</h5> -->
+                                <p class="card-text">{{ hours_streamed[0][1] }} heures streamées</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="..." class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <!-- <h5 class="card-title">Card tit  le</h5> -->
+                                <p class="card-text">{{ hours_watched[0][1] }} heures regardées</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="d-flex justify-content-center px-2 mt-4 w-100">
                     <div class="divDatatable">
                         <table id="example" class="table table-striped" style="width:100%">
@@ -70,12 +96,11 @@
 </div>
 {% endblock %}
 {% block script %}
-{{ super () }} 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var yearSelect = document.getElementById('year-select');
-            var yearForm = document.getElementById('year-form');
-
+{{ super () }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var yearSelect = document.getElementById('year-select');
+        var yearForm = document.getElementById('year-form');
             if (yearSelect.value === '') {
                 yearForm.submit();
             }
@@ -83,6 +108,7 @@
                 yearForm.submit();
             });
         });
+    });
 
         $('#selectedOption').prop('disabled', true);
         $('#year-form').on('submit', function() {
@@ -94,4 +120,3 @@
         });
     </script> 
 {% endblock %}
-
