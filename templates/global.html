@@ -26,24 +26,28 @@
             </div>
         </div>
 
-        <table id="maTable" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Statistique</th>
-                    <th>Date du record</th>
-                    <th>Valeur record</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for stat, record in records.items() %}
-                    <tr>
-                        <td>{{ stat }}</td>
-                        <td>{{ record['date'] }}</td>
-                        <td>{{ '{:,.0f}'.format(record['record']) }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="d-flex justify-content-center px-2 mt-4 w-100">
+            <div class="divDatatable">
+                <table id="maTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Statistique</th>
+                            <th>Date du record</th>
+                            <th>Valeur record</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat, record in records.items() %}
+                            <tr>
+                                <td>{{ stat }}</td>
+                                <td>{{ record['date'] }}</td>
+                                <td>{{ '{:,.0f}'.format(record['record']) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -1,34 +1,56 @@
 {% extends 'base.html' %}
 {% block title %}Liste des jeux{% endblock %}
 {% block content %}
-<div class="cardStats py-2">
-    <div class="divSpace">
-        <h1 class="text-center mb-4 mt-4">Liste des jeux Streamer</h1>
-        <table id="example" class="table table-striped" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Rang</th>
-                    <th>Jeu</th>
-                    <th>Heures vues</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for game in table %}
-                <tr>
-                    <td>1</td>
-                    <td>{{ game.game }}</td>
-                    <td>{{ game.sumHours }}</td>
-                    <td>
-                        <!-- Vous pouvez ajouter des boutons ou des liens ici pour les actions -->
-                        <a href="{{ url_for('jeu_vue', jeu=game.game)}}" class="btn btn-primary">Voir détails</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+{% extends 'base.html' %}
+{% block title %}Liste des jeux{% endblock %}
+{% block content %}
+
+<div class="card-body p-0">
+    <div class="card-header bg-violetTwitch p-3 m-0">
+        <h5 class="card-title text-white m-0">Top des jeux sur Twitch</h5>
     </div>
-</div>
+
+    <div class="cardStats p-2">
+        <div class="divSpace">
+            <table id="example" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Jeu</th>
+                        <th>Heures vues</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set i = 0 %}
+                    {% for game in table %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ game.game }}</td>
+                        <td>{{ game.sumHours|format }}</td>
+                        <td>
+                            <a href="{{ url_for('jeu_vue', jeu=game.game)}}" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        </td>
+                    </tr>
+                    {% set i = i + 1 %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+{{ super () }}
+<script>
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+{% endblock %}
+    </div>
+
 {% endblock %}
 
 {% block script %}
