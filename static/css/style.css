@@ -402,3 +402,9 @@ input:checked + .slider:before {
     --bs-btn-disabled-border-color: #65459b;
     --bs-gradient: none;
 }
+
+.active-purple {
+	color: var(--bs-btn-hover-color);
+	background-color: var(--bs-btn-hover-bg);
+	border-color: var(--bs-btn-hover-border-color);
+}
