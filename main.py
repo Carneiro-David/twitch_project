@@ -1,6 +1,6 @@
 from controllers.global_controller import GlobalController
 import pandas as pd
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, redirect, url_for
 from flask_mysqldb import MySQL
 import json
 import matplotlib.pyplot as plt
@@ -14,6 +14,8 @@ import plotly.graph_objects as go
 import plotly
 from random import sample
 import random
+from datetime import datetime
+
 
 app = Flask(__name__)
 app.secret_key = 'mIlTkQ6kFlKVJ1ANl3vR7jSioF6PVhTv'
@@ -45,18 +47,51 @@ def toggle_graph():
 def format_number(value):
     return '{:,}'.format(value)
 
-@app.route('/jeu')
+@app.route('/jeu',  methods=['GET', 'POST'])
 def allGames():
+    category_name = None
+    
+    if request.method == 'POST':
+        category_name = request.form.get('categoryName')
+
+        print("Nom de la catégorie:", category_name)
+
     cursor = mysql.connection.cursor()
+
+    try:
+
+        current_datetime = datetime.now()
+
+        # Extraire le mois et l'année
+        current_month= current_datetime.month
+        current_year = current_datetime.year
+
+        query = """
+            INSERT INTO game_data 
+            (game, `rank`, month, year, hours_watched, hours_streamed, peak_viewers, 
+            peak_channels, streamers, avg_viewers, avg_channels, avg_viewer_ratio) 
+            VALUES (%s, 1, %s, %s, 0, 0, 0, 0, 0, 0, 0, 0)
+        """
+        cursor.execute(query, (category_name, current_month, current_year))
+        mysql.connection.commit()
+        print("Catégorie insérée avec succès")
+    except Exception as e:
+        print("Erreur lors de l'insertion :", e)
+        mysql.connection.rollback()
+
+    # Pas besoin de fermer le curseur ici, nous l'utiliserons à nouveau
     
-    query = "SELECT game, sum(hours_watched) as sumHours FROM `game_data` group by game ORDER BY `sumHours` DESC"
-    cursor.execute(query)
-    
-    data_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
-    
-    cursor.close()
-    
-    data_dict = data_df.to_dict(orient='records')
+    try:
+        query = "SELECT game, sum(hours_watched) as sumHours FROM `game_data` group by game ORDER BY `sumHours` DESC"
+        cursor.execute(query)
+        
+        data_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
+        
+        data_dict = data_df.to_dict(orient='records')
+    except Exception as e:
+        print("Erreur lors de la récupération des données :", e)
+    finally:
+        cursor.close()
     
     return render_template('listJeu.html', table=data_dict)
     
@@ -114,7 +149,7 @@ def jeu_vue(jeu):
     
     cursor.close()
 
-    myDatetime = datetime.datetime.now()
+    myDatetime = datetime.now()
     current_year = myDatetime.year
 
     avg_viewers_by_year = data_df.groupby('year')['avg_viewers'].mean()
@@ -157,8 +192,8 @@ def jeu_vue(jeu):
     return render_template('jeu.html', hours_watched = hours_watched, hours_streamed= hour_streamed, table = table_data, viewers_month_chart = chart_image_annee, chart_image_by_year=chart_image, years=years, dataAnnee = data_json2, annee = selected_year, current_year = current_year, jeu = jeu, chart_image_annee_default = chart_image_annee_default)
   
 def generate_default_chart(jeu, selected_year):
-    cursor = mysql.connection.cursor()
 
+    cursor = mysql.connection.cursor()
     query = "SELECT * FROM game_data WHERE game=%s AND year=%s"
     cursor.execute(query, (jeu, selected_year))
     dataFrameAnnee = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
@@ -191,6 +226,31 @@ def generate_default_chart(jeu, selected_year):
     cursor.close()
 
     return chart_image_annee
+
+
+@app.route('/jeuUpdate/<jeu>', methods=['GET', 'POST'])
+def game_update(jeu):
+    if request.method == 'POST':
+        nvNom = request.form.get('nvNom')
+
+        print("Jeu:", jeu)
+        print("Nouveau nom:", nvNom)
+
+        if nvNom:
+            if len(nvNom) < 2 or len(nvNom) > 100:
+                return "Le nom du jeu doit contenir entre 2 et 100 caractères."
+
+            cursor = mysql.connection.cursor()
+            query = "UPDATE game_data SET game = %s WHERE game = %s"
+            cursor.execute(query, (nvNom, jeu))
+            mysql.connection.commit()
+            cursor.close()
+
+            print("Requête SQL:", query)
+
+        return redirect(url_for('jeu_vue', jeu=nvNom))
+
+    return render_template('jeu_update.html', jeu=jeu)
 
 @app.route('/timeline/', methods=['GET'])
 def timeline():

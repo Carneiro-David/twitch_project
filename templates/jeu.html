@@ -8,7 +8,7 @@
 
     <div class="cardStats pt-4 p-2">
         <div class="divSpace">
-   
+            <a href="{{ url_for('game_update', jeu=jeu) }}" class="btn btn-primary">Mettre à jour le jeu</a>
                 <div class="graphRow">
                     <div id="viewers_year_chart" class="">
                         {% if chart_image_by_year %}
@@ -108,7 +108,6 @@
                 yearForm.submit();
             });
         });
-    });
 
         $('#selectedOption').prop('disabled', true);
         $('#year-form').on('submit', function() {

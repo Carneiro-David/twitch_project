@@ -73,6 +73,9 @@ body {
     font-size: 1.6rem;
     text-align: center;
 }
+.minw1 {
+    min-width: 27%;
+}
 footer {
     background-color: #333;
     color: #fff;
