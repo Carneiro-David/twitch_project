@@ -1,57 +1,73 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="text-center mb-4 mt-4">Stat sur le jeu</h1>
-    <div class="container">
-        <div class="d-flex flex-wrap">
-            <div id="chart-by-year" class="col-12 col-lg-6">
-                {% if chart_image_by_year %}
-                <img src="data:image/png;base64,{{ chart_image_by_year }}" alt="Graphique à barres par année">
-                {% endif %}
-            </div>
+<div class="card-body p-0">
+    <div class="card-header bg-violetTwitch p-3 m-0">
+        <h5 class="card-title text-white m-0">Statistiques {{ jeu }}</h5>
+    </div>
 
-            <div id="graphAnne" class="col-12 col-lg-6">
-                <form method="post" id="year-form">
-                    <label for="year-select">Sélectionnez une année :</label>
-                    <select id="year-select" name="year">
-                        <option value="">{{annee}}</option>
-                        {% for year in years %}
-                        {% if year != annee %}
-                        <option value="{{ year }}">{{ year }}</option>
+    <div class="cardStats pt-4 p-2">
+        <div class="divSpace">
+   
+                <div class="graphRow">
+                    <div id="viewers_year_chart" class="">
+                        {% if chart_image_by_year %}
+                        <img src="data:image/png;base64,{{ chart_image_by_year }}" alt="Graphique à barres par année">
                         {% endif %}
-                        {% endfor %}
-                    </select>
-                </form>
-                {% if graphAnne %}
-                <img src="data:image/png;base64,{{ graphAnne }}" alt="Graphique à barres par mois">
-                {% endif %}
-            </div>
-        </div>
-        <div>
-            <h1>Peak viewer all time : {{test}}</h1>
-            <div>
-                <table id="example" class="table table-striped" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Jeu</th>
-                            <th>Record de viewers</th>
-                            <th>Office</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in table %}
-                        <tr>
-                            <td>{{ item['game'] }}</td>
-                            <td>{{ item['peak_viewer'] }}</td>
-                            <td>{{ item['year'] }}</td>
-                        </tr>
-                        {% endfor %}
+                    </div>
+                    <div id="viewers_month_chart" class="d-flex flex-column align-items-center">
+                        <form method="post" id="year-form">
+                            <div class="input-group">
+                                <label class="input-group-text bg-violetTwitchLight text-white" for="year-select">Année</label>
+                                <select class="form-select" id="year-select" name="year">
+                                    <option id="selectedOption" value="null" hidden>{{annee}}</option>
+                                    {% for year in years %}
+                                    {% if year != annee %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
 
-                    </tbody>
-                </table>
+                        {% if graphAnne %}
+                        <img src="data:image/png;base64,{{ graphAnne }}" alt="Graphique à barres par mois">
+                        {% endif %}
+      
+                        {% if viewers_month_chart %}
+                        <img src="data:image/png;base64,{{ viewers_month_chart }}" alt="Graphique à barres par mois">
+                        {% elif chart_image_annee_default %}
+                            <img src="data:image/png;base64,{{ chart_image_annee_default }}" alt="Graphique à barres par mois">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center px-2 mt-4 w-100">
+                    <div class="divDatatable">
+                        <table id="example" class="table table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Jeu</th>
+                                    <th>Année</th>
+                                    <th>Record de viewers</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in table %}
+                                <tr>
+                                    <td>{{ item['game'] }}</td>
+                                    <td>{{ item['year'] }}</td>
+                                    <td>{{ item['peak_viewer']|format }}</td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 {% block script %}
 {{ super () }} 
@@ -60,9 +76,17 @@
             var yearSelect = document.getElementById('year-select');
             var yearForm = document.getElementById('year-form');
 
+            if (yearSelect.value === '') {
+                yearForm.submit();
+            }
             yearSelect.addEventListener('change', function () {
                 yearForm.submit();
             });
+        });
+
+        $('#selectedOption').prop('disabled', true);
+        $('#year-form').on('submit', function() {
+            $('#selectedOption').prop('disabled', false);
         });
 
         $(document).ready(function () {
