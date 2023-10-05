@@ -45,7 +45,6 @@ def toggle_graph():
     global_controller = GlobalController()
     return global_controller.toggle_graph()
 
-
 @app.route('/')
 def index():
     cursor = mysql.connection.cursor()
