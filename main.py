@@ -41,6 +41,9 @@ def toggle_graph():
     global_controller = GlobalController()
     return global_controller.toggle_graph()
 
+@app.template_filter('format')
+def format_number(value):
+    return '{:,}'.format(value)
 
 @app.route('/jeu')
 def allGames():
@@ -56,13 +59,18 @@ def allGames():
     data_dict = data_df.to_dict(orient='records')
     
     return render_template('listJeu.html', table=data_dict)
-
-
+    
 @app.route('/jeu/<jeu>', methods=['GET', 'POST'])
 def jeu_vue(jeu):
     cursor = mysql.connection.cursor()
 
-    selected_year = None
+    selected_year = request.form.get('year')
+    chart_image_annee_default = None
+
+    if selected_year is None:
+        selected_year = '2023'
+        chart_image_annee_default = generate_default_chart(jeu, selected_year)
+
     data_json2 = None 
     dataFrameAnnee = pd.DataFrame()
 
@@ -81,8 +89,6 @@ def jeu_vue(jeu):
             dataFrameAnnee['month'] = pd.Categorical(dataFrameAnnee['month'], categories=months_order, ordered=True)
 
             data_json2 = json.dumps(dataFrameAnnee.to_dict(orient='records'))
-
-
 
     query = "SELECT DISTINCT year FROM game_data WHERE game=%s" 
     cursor.execute(query, (jeu,)) 
@@ -117,6 +123,7 @@ def jeu_vue(jeu):
 
     ax.grid(True, linestyle='-', linewidth=0.5, color='lightgrey') 
     ax.set_axisbelow(True)
+    
     plt.xlabel('Année') 
     plt.xticks(rotation=0)
     plt.ylabel('Nombre moyen de spectateurs')
@@ -147,7 +154,43 @@ def jeu_vue(jeu):
         chart_image_annee = base64.b64encode(image_buffer.read()).decode('utf-8')
         plt.clf()
 
-    return render_template('jeu.html', hours_watched = hours_watched, hours_streamed= hour_streamed, table = table_data, graphAnne = chart_image_annee, chart_image_by_year=chart_image, years=years, dataAnnee = data_json2, annee = selected_year, current_year = current_year)
+    return render_template('jeu.html', hours_watched = hours_watched, hours_streamed= hour_streamed, table = table_data, viewers_month_chart = chart_image_annee, chart_image_by_year=chart_image, years=years, dataAnnee = data_json2, annee = selected_year, current_year = current_year, jeu = jeu, chart_image_annee_default = chart_image_annee_default)
+  
+def generate_default_chart(jeu, selected_year):
+    cursor = mysql.connection.cursor()
+
+    query = "SELECT * FROM game_data WHERE game=%s AND year=%s"
+    cursor.execute(query, (jeu, selected_year))
+    dataFrameAnnee = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
+
+    month_mapping = {1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Avr', 5: 'Mai', 6: 'Jun',
+                    7: 'Jul', 8: 'Aou', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
+    dataFrameAnnee['month'] = dataFrameAnnee['month'].replace(month_mapping)
+
+    months_order = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec']
+    dataFrameAnnee['month'] = pd.Categorical(dataFrameAnnee['month'], categories=months_order, ordered=True)
+
+    # Générer le graphique pour l'année sélectionnée
+    avg_viewers_by_month = dataFrameAnnee.groupby('month')['avg_viewers'].mean().sort_index()
+    ax = avg_viewers_by_month.plot(kind='bar')
+
+    plt.xlabel('Mois')
+    plt.xticks(rotation=0)
+    ax.grid(True, linestyle='-', linewidth=0.5, color='lightgrey') 
+    ax.set_axisbelow(True)
+
+    plt.ylabel('Nombre moyen de spectateurs')
+    plt.title("Nombre moyen de spectateurs par mois pour l'année " + selected_year)
+
+    image_buffer = io.BytesIO()
+    plt.savefig(image_buffer, format='png')
+    image_buffer.seek(0)
+    chart_image_annee = base64.b64encode(image_buffer.read()).decode('utf-8')
+    plt.clf()
+
+    cursor.close()
+
+    return chart_image_annee
 
 @app.route('/timeline/', methods=['GET'])
 def annee_vue():

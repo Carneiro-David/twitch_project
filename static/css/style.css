@@ -7,7 +7,7 @@
 html {
     scroll-behavior: smooth;
     overflow-x: auto;
-    height: 100vh;
+    height: 100%;
 }
 body {
     height: 100vh;
@@ -26,7 +26,7 @@ body {
 }
 .fond {
     /* position: fixed; */
-    display: table;
+    /* display: table; */
     top: 0;
     left: 0;
     width: 100%;
@@ -58,6 +58,9 @@ body {
 .bg-violetTwitch {
     background-color: #6441a5;
 }
+.bg-violetTwitchLight {
+    background-color: #8c59eb;
+}
 .txtStyle1 {
     font-weight: 400;
     letter-spacing: .2px;
@@ -69,6 +72,15 @@ body {
     text-transform: uppercase;
     font-size: 1.6rem;
     text-align: center;
+}
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    width: 100%;
+    text-align: center;
+    bottom: 0;
+    left: 0;
 }
 /* ------------------------------------------------------------------------------------------------------------------------ */
 /* ------------------------------------------------------ PAGE GLOBAL ----------------------------------------------------- */
@@ -157,6 +169,26 @@ input:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
+}
+
+/* ------------------------------------------------------------------------------------------------------------------------ */
+/* -------------------------------------------------------- PAGE JEUX ----------------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------------------------------ */
+
+.graphRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+}
+@media (max-width: 1399px) {
+    #year-form {
+        margin-top: 1.6rem;
+    }
+}
+.divDatatable {
+    width: 91%;
+    text-align: center;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------------ */
@@ -380,4 +412,56 @@ input:checked + .slider:before {
 	--button-inner-border-color: var(--highlight-color-purple);
 	--button-text-color-hover: #ece8e1;
 	--button-bits-color-hover: #ece8e1;
+}
+
+/* ---------------- SCROLLBAR ---------------- */
+::-webkit-scrollbar {
+    width: 17px;
+    padding: 0;
+    margin: 0;
+    background-color: rgba(34, 37, 38, 1);
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(72, 78, 81, 1);
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(91, 98, 101);
+}
+
+/* SCROLLBAR DISCUSSIONS */
+.bodyDiscussion::-webkit-scrollbar {
+    width: 20px;
+    background-color: transparent;
+}
+
+.bodyDiscussion::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.bodyDiscussion::-webkit-scrollbar-thumb {
+    background-color: #343a40;
+    border-radius: 20px;
+    border: 6px solid transparent;
+    background-clip: content-box;
+}
+
+.bodyDiscussion::-webkit-scrollbar-thumb:hover {
+    background-color: #454d54;
+}
+
+/* Mozilla Firefox */
+html {
+    scrollbar-color: rgba(34, 37, 38, 1) rgba(72, 78, 81, 1);
+}
+
+.bodyDiscussion {
+    scrollbar-width: thin;
+    scrollbar-color: #343a40 transparent;
 }
