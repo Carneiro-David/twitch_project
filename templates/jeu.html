@@ -49,12 +49,10 @@
 
                     </tbody>
                 </table>
-                {{table}}
             </div>
         </div>
     </div>
 {% endblock %}
-
 {% block script %}
 {{ super () }} 
     <script>
@@ -66,7 +64,6 @@
                 yearForm.submit();
             });
         });
-        new DataTable('#example');
 
         $(document).ready(function () {
             $('#example').DataTable();
