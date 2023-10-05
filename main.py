@@ -14,6 +14,8 @@ import plotly.graph_objects as go
 import plotly
 from random import sample
 import random
+from datetime import datetime
+
 
 app = Flask(__name__)
 app.secret_key = 'mIlTkQ6kFlKVJ1ANl3vR7jSioF6PVhTv'
@@ -45,18 +47,51 @@ def toggle_graph():
 def format_number(value):
     return '{:,}'.format(value)
 
-@app.route('/jeu')
+@app.route('/jeu',  methods=['GET', 'POST'])
 def allGames():
+    category_name = None
+    
+    if request.method == 'POST':
+        category_name = request.form.get('categoryName')
+
+        print("Nom de la catégorie:", category_name)
+
     cursor = mysql.connection.cursor()
+
+    try:
+
+        current_datetime = datetime.now()
+
+        # Extraire le mois et l'année
+        current_month= current_datetime.month
+        current_year = current_datetime.year
+
+        query = """
+            INSERT INTO game_data 
+            (game, `rank`, month, year, hours_watched, hours_streamed, peak_viewers, 
+            peak_channels, streamers, avg_viewers, avg_channels, avg_viewer_ratio) 
+            VALUES (%s, 1, %s, %s, 0, 0, 0, 0, 0, 0, 0, 0)
+        """
+        cursor.execute(query, (category_name, current_month, current_year))
+        mysql.connection.commit()
+        print("Catégorie insérée avec succès")
+    except Exception as e:
+        print("Erreur lors de l'insertion :", e)
+        mysql.connection.rollback()
+
+    # Pas besoin de fermer le curseur ici, nous l'utiliserons à nouveau
     
-    query = "SELECT game, sum(hours_watched) as sumHours FROM `game_data` group by game ORDER BY `sumHours` DESC"
-    cursor.execute(query)
-    
-    data_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
-    
-    cursor.close()
-    
-    data_dict = data_df.to_dict(orient='records')
+    try:
+        query = "SELECT game, sum(hours_watched) as sumHours FROM `game_data` group by game ORDER BY `sumHours` DESC"
+        cursor.execute(query)
+        
+        data_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
+        
+        data_dict = data_df.to_dict(orient='records')
+    except Exception as e:
+        print("Erreur lors de la récupération des données :", e)
+    finally:
+        cursor.close()
     
     return render_template('listJeu.html', table=data_dict)
     
@@ -114,7 +149,7 @@ def jeu_vue(jeu):
     
     cursor.close()
 
-    myDatetime = datetime.datetime.now()
+    myDatetime = datetime.now()
     current_year = myDatetime.year
 
     avg_viewers_by_year = data_df.groupby('year')['avg_viewers'].mean()
