@@ -52,11 +52,11 @@
                                         <i class="fa-solid fa-video fas"></i>
                                     </div>
                                     <div class="mb-4">
-                                        <h5 class="card-title mb-0">Heures Streamées</h5>
+                                        <h5 class="card-title mb-0">Heures streamées</h5>
                                     </div>
                                     <div class="row align-items-center mb-2 d-flex">
                                         <div class="col-8">
-                                            <h2 id="nbToFormat" class="d-flex align-items-center mb-0"> {{ hours_streamed[0][1] }}</h2>
+                                            <h2 id="nbToFormat" class="d-flex align-items-center mb-0"> {{ hours_streamed[0][1]|format }}</h2>
                                         </div>
                                     </div>
                                     <div class="progress mt-1 " data-height="8" style="height: 8px;">
@@ -73,11 +73,11 @@
                                         <i class="fas fa-users"></i>
                                     </div>
                                     <div class="mb-4">
-                                        <h5 class="card-title mb-0">Heures Regardées</h5>
+                                        <h5 class="card-title mb-0">Heures regardées</h5>
                                     </div>
                                     <div class="row align-items-center mb-2 d-flex">
                                         <div class="col-8">
-                                            <h2 id="nbToFormatBis" class="d-flex align-items-center mb-0">{{ hours_watched[0][1] }}</h2>
+                                            <h2 id="nbToFormatBis" class="d-flex align-items-center mb-0">{{ hours_watched[0][1]|format }}</h2>
                                         </div>
                                     </div>
                                     <div class="progress mt-1 " data-height="8" style="height: 8px;">
@@ -119,14 +119,6 @@
 {% block script %}
 {{ super () }}
 <script>
-    function formatNumberWithSpaces(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    }
-    var formattedNumber = formatNumberWithSpaces(document.getElementById("nbToFormat").innerHTML);
-    var formattedNumber = formatNumberWithSpaces(document.getElementById("nbToFormatBis").innerHTML);
-    document.getElementById("nbToFormat").textContent = formattedNumber;
-    document.getElementById("nbToFormatBis").textContent = formattedNumber;
-
     document.addEventListener('DOMContentLoaded', function () {
         var yearSelect = document.getElementById('year-select');
         var yearForm = document.getElementById('year-form');
