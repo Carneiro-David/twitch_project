@@ -1,8 +1,5 @@
-from flask import Flask, render_template
-from flask_mysqldb import MySQL
 from controllers.annee_controller import AnneeController
 from controllers.global_controller import GlobalController
-
 import pandas as pd
 from flask import Flask, request, render_template, jsonify
 from flask_mysqldb import MySQL
@@ -77,12 +74,10 @@ def filter_data(jeu):
             cursor.execute(query, (jeu, selected_year))
             dataFrameAnnee = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
 
-            # Remplacer les numéros des mois par leurs abréviations
             month_mapping = {1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Avr', 5: 'Mai', 6: 'Jun',
                             7: 'Jul', 8: 'Aou', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
             dataFrameAnnee['month'] = dataFrameAnnee['month'].replace(month_mapping)
 
-            # Convertir les mois en catégorie et spécifier l'ordre des catégories
             months_order = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aou', 'Sep', 'Oct', 'Nov', 'Dec']
             dataFrameAnnee['month'] = pd.Categorical(dataFrameAnnee['month'], categories=months_order, ordered=True)
 
