@@ -1,0 +1,7 @@
+Flask
+Flask-MySQLdb
+pandas
+matplotlib
+plotly
+raceplotly
+python-dotenv

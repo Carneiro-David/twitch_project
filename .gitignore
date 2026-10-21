@@ -1,1 +1,33 @@
-__pycache__
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+
+# Environnement Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Tests et outils
+.pytest_cache/
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Logs et fichiers temporaires
+*.log
+*.tmp
+
+# Bases locales
+*.db
+*.sqlite
+*.sqlite3

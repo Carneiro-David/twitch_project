@@ -15,16 +15,21 @@ import plotly
 from random import sample
 import random
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'mIlTkQ6kFlKVJ1ANl3vR7jSioF6PVhTv'
+app.secret_key = os.environ["SECRET_KEY"]
+
 
 # Configure MySQL connection
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'twitch'
+app.config["MYSQL_HOST"] = os.getenv("MYSQL_HOST", "localhost")
+app.config["MYSQL_USER"] = os.getenv("MYSQL_USER", "root")
+app.config["MYSQL_PASSWORD"] = os.getenv("MYSQL_PASSWORD", "")
+app.config["MYSQL_DB"] = os.getenv("MYSQL_DB", "twitch")
+app.config["MYSQL_PORT"] = int(os.getenv("MYSQL_PORT", "3306"))
 
 mysql = MySQL(app)
 matplotlib.use('Agg')
